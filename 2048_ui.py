@@ -33,9 +33,10 @@ class Background(object):
         
 numbers = [["" for k in range(4)] for i in range(4)]
 points = 0
+n_empty = 4 * 4
 
 def parse_array(number_pos):    # If smth goes wrong, first check here
-    global points
+    global points, n_empty
     # by default shift on left side (paking/unpaking in "move" must/or not rotate
     
     prev = [-1, -1] # prev[0] - number in cell, prev[1] - location of this cell
@@ -46,6 +47,7 @@ def parse_array(number_pos):    # If smth goes wrong, first check here
             #print(prev, number_pos, k)
             number_pos[prev[1]] = str(int(prev[0])*2)
             points += int(prev[0])
+            n_empty += 1
             prev = [-1, -1]
             number_pos[k] = ""
             continue
@@ -100,6 +102,9 @@ def move(direction, numbers):
     return prev_state
                 
 def pop_up(numbers):
+    global n_empty
+    if n_empty == 0:
+        return
     rand_pos = random.randint(0, 4*4 - 1)
     col = rand_pos % 4
     row = rand_pos // 4
@@ -108,6 +113,7 @@ def pop_up(numbers):
         col = rand_pos % 4
         row = rand_pos // 4 
     numbers[row][col] = "1"
+    n_empty -= 1
     
 
 def run_game(width, height, fps, numbers):
@@ -181,6 +187,6 @@ def run_game(width, height, fps, numbers):
         clock.tick(fps)
 
 
-width = 70 * 2 + 70 * 4     # Here we must use tile_size and begin
+width = 70 * 2 + 70 * 4     # Here we must use tile_size and begin variables
 height = 70 * 2 + 70 * 4 
 run_game(width, height, 30, numbers)

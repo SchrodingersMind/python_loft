@@ -13,13 +13,18 @@ numbers = [["" for k in range(n_cell_x)] for i in range(n_cell_y)]
 list_numbers = [str(pow(2, i)) for i in range(n_cell_x * n_cell_y)]
 n_empty = n_cell_x * n_cell_y
 
+# Read more at http://ascii-table.com/ansi-escape-sequences.php
+FG_COLOR = '\x1b[30m'
+BG_COLOR = '\x1b[47m'
+
 arrow_up = b'\x1b[A'
 arrow_down = b'\x1b[B'
 arrow_right = b'\x1b[C'
 arrow_left = b'\x1b[D'
 
 
-def clearx(): #clear console
+def clearx():
+    """ Clear console """
     if platform == 'linux':
         a = os.system('clear')
         del a
@@ -30,7 +35,7 @@ def clearx(): #clear console
         print('\n'*100)
 
 def print_string(string, delay=0.1, color="33", tab=0):
-    # print string like human
+    # print string like human (char by char)
     colour = "\x1b[" +color+ "m"
     pre = " " * tab + colour
     for i in range(len(string)):
@@ -61,7 +66,7 @@ def print_square():
                     if number != "":
                         color_used = True
                         color = str(30 + (list_numbers.index(number)) % 7)    # I don't know why, but available only 6 colors
-                        string_tmp += "\x1b[" + color + "m" + number + "\x1b[0m"
+                        string_tmp += "\x1b[" + color + "m" + number + FG_COLOR
                 string_tmp += " " * spaces
                 if spaces * 2 + num_len + 1 != 10:
                     string_tmp += "  "
@@ -161,6 +166,9 @@ def check_input(numbers):
         move(2, numbers)
     elif k == arrow_left:
         move(3, numbers)
+    else:
+    	# Do nothing, if user click on other button
+    	return
     pop_up(numbers)
     
 def print_game(numbers):
@@ -170,10 +178,13 @@ def print_game(numbers):
     print_square()
     try:
         check_input(numbers)
-    except:
-        print("Smth goes wrong")
+    except KeyboardInterrupt:
+        print("Cleaning.......")
+        print("\x1b[0m")
         exit()
-    
+  
+# Set defaults colors for fore- and back-ground
+print(BG_COLOR)   
 pop_up(numbers)
 while True:
     print_game(numbers)
